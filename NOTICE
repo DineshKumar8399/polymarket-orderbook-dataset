@@ -1,0 +1,33 @@
+Polymarket Order Book Dataset
+Copyright (c) 2026 Dinesh Gopalakrishnan
+
+Licensed under the Creative Commons Attribution 4.0 International License
+(CC BY 4.0). The full legal code is in LICENSE.
+
+SPDX-License-Identifier: CC-BY-4.0
+
+
+ATTRIBUTION
+
+If you use this dataset, please credit it as:
+
+  Polymarket Order Book Dataset (2026), Dinesh Gopalakrishnan.
+  Licensed under CC BY 4.0.
+  https://github.com/DineshKumar8399/polymarket-orderbook-dataset
+
+
+DISCLAIMER
+
+This dataset is provided for research and educational purposes. It is an
+independent observational recording of publicly displayed market data; it is
+not affiliated with, endorsed by, or sourced under any agreement with any
+exchange or venue.
+
+Nothing here is financial advice. Past market behaviour does not predict future
+market behaviour, and a backtest on this data is not a trading strategy.
+
+The data carries several documented collection artifacts — a four-day outage, a
+column that stops being populated partway through, and time-censored labels
+among them. Read the "Known issues" section of README.md before training
+anything on it. The same issues ship as data_quality.parquet so a pipeline can
+assert on them directly.

@@ -243,7 +243,8 @@ of what trades.
 ## License
 
 **CC BY 4.0** — use it, remix it, build commercial things on it; just give
-credit. See [LICENSE](LICENSE).
+credit. Full legal code in [LICENSE](LICENSE); attribution and disclaimer in
+[NOTICE](NOTICE).
 
 ```
 Polymarket Order Book Dataset (2026), Dinesh Gopalakrishnan.
