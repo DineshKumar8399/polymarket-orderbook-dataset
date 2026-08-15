@@ -53,7 +53,7 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 |---|---|---|
 | `quotes/dt=YYYY-MM-DD/*.parquet` | `237,607,140` | Book quotes for every tracked market, partitioned by date |
 | `markets.parquet` | `164,709` | One row per market: question text, category, coverage |
-| `labels.parquet` | `139,167` | Binary settlement outcomes, with a `source` column |
+| `labels.parquet` | `139,847` | Binary settlement outcomes, with a `source` column |
 | `watch_quotes.parquet` | `1,441,448` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
@@ -226,8 +226,8 @@ your method is sensitive to it.
 ### 5. Labels are time-censored
 
 Most `source = 'api'` labels come from a one-off backfill run on 2026-07-23/24.
-So "has a label" correlates strongly with "settled before Jul 24" — 37,815
-markets (23%) carry an authoritative label, and they are **not a random 23%**.
+So "has a label" correlates strongly with "settled before Jul 24" — 40,595
+markets (25%) carry an authoritative label, and they are **not a random 25%**.
 
 This bites hardest on walk-forward validation: naively splitting train/test on a
 late date can leave you with an empty test set and a script that reports success
