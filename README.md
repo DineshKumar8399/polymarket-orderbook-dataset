@@ -1,8 +1,8 @@
 # Polymarket Order Book Dataset
 
 Order-book snapshots from a prediction market, collected continuously between
-**2026-07-10** and **2026-08-14**: `237,607,140` quote observations across
-`164,709` markets, plus settlement outcomes and a separate high-frequency feed
+**2026-07-10** and **2026-08-15**: `246,331,456` quote observations across
+`167,981` markets, plus settlement outcomes and a separate high-frequency feed
 that records actual traded prices.
 
 It is published so other people can build and train on it without first spending
@@ -34,16 +34,16 @@ import duckdb
 duckdb.sql("SELECT * FROM 'polymarket-data/quotes/**/*.parquet' LIMIT 5").show()
 ```
 
-**GitHub Releases** (a single dated tarball, ~131 MB):
+**GitHub Releases** (a single dated tarball, ~135 MB):
 
 ```bash
-gh release download data-2026-08-15 --repo DineshKumar8399/polymarket-orderbook-dataset
+gh release download data-2026-08-16 --repo DineshKumar8399/polymarket-orderbook-dataset
 tar --zstd -xf polymarket-orderbook-*.tar.zst
 ```
 
-Each release is a frozen snapshot, so `data-2026-08-15` is reproducible: cite the
+Each release is a frozen snapshot, so `data-2026-08-16` is reproducible: cite the
 tag and anyone can reconstruct the exact data you trained on. Latest build:
-**2026-08-15**.
+**2026-08-16**.
 
 ---
 
@@ -51,13 +51,13 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 
 | File | Rows | What it is |
 |---|---|---|
-| `quotes/dt=YYYY-MM-DD/*.parquet` | `237,607,140` | Book quotes for every tracked market, partitioned by date |
-| `markets.parquet` | `164,709` | One row per market: question text, category, coverage |
-| `labels.parquet` | `139,847` | Binary settlement outcomes, with a `source` column |
-| `watch_quotes.parquet` | `1,441,448` | High-frequency feed — **the only table with traded prices** |
+| `quotes/dt=YYYY-MM-DD/*.parquet` | `246,331,456` | Book quotes for every tracked market, partitioned by date |
+| `markets.parquet` | `167,981` | One row per market: question text, category, coverage |
+| `labels.parquet` | `141,975` | Binary settlement outcomes, with a `source` column |
+| `watch_quotes.parquet` | `1,491,656` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
-Total: about `131 MB` of ZSTD-compressed Parquet.
+Total: about `135 MB` of ZSTD-compressed Parquet.
 
 ---
 
@@ -136,7 +136,7 @@ also the cost per unit of payoff.
 | `first_ts` / `last_ts` | timestamp | Coverage window |
 
 `question` is stored here rather than on every quote row — repeating it
-`237,607,140` times is most of why the raw CSV was 32 GB.
+`246,331,456` times is most of why the raw CSV was 32 GB.
 
 ### `labels.parquet`
 
@@ -214,7 +214,7 @@ has been **dropped rather than shipped as an empty column named `last`**.
 
 If your question is "did this actually transact" — fill realism, execution
 modelling, print-versus-quote — it is only answerable on `watch_quotes`, which
-covers 4,372 markets rather than 164,709. Note `last_traded` is itself 85.6%
+covers 4,551 markets rather than 167,981. Note `last_traded` is itself 84.8%
 populated, not 100%.
 
 ### 4. Crossed books
@@ -226,8 +226,8 @@ your method is sensitive to it.
 ### 5. Labels are time-censored
 
 Most `source = 'api'` labels come from a one-off backfill run on 2026-07-23/24.
-So "has a label" correlates strongly with "settled before Jul 24" — 40,595
-markets (25%) carry an authoritative label, and they are **not a random 25%**.
+So "has a label" correlates strongly with "settled before Jul 24" — 45,478
+markets (27%) carry an authoritative label, and they are **not a random 27%**.
 
 This bites hardest on walk-forward validation: naively splitting train/test on a
 late date can leave you with an empty test set and a script that reports success
@@ -261,11 +261,11 @@ Markets by category:
 
 ```
    category  slugs
-     sports 161511
-   politics   1132
-    climate    917
-    culture    755
-      macro    142
+     sports 164249
+   politics   1443
+    climate    947
+    culture    936
+      macro    154
  technology     93
     finance     82
      crypto     51
