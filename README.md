@@ -1,8 +1,8 @@
 # Polymarket Order Book Dataset
 
 Order-book snapshots from a prediction market, collected continuously between
-**2026-07-10** and **2026-08-19**: `281,268,633` quote observations across
-`172,036` markets, plus settlement outcomes and a separate high-frequency feed
+**2026-07-10** and **2026-08-20**: `290,006,113` quote observations across
+`172,540` markets, plus settlement outcomes and a separate high-frequency feed
 that records actual traded prices.
 
 It is published so other people can build and train on it without first spending
@@ -34,16 +34,16 @@ import duckdb
 duckdb.sql("SELECT * FROM 'polymarket-data/quotes/**/*.parquet' LIMIT 5").show()
 ```
 
-**GitHub Releases** (a single dated tarball, ~149 MB):
+**GitHub Releases** (a single dated tarball, ~153 MB):
 
 ```bash
-gh release download data-2026-08-20 --repo DineshKumar8399/polymarket-orderbook-dataset
+gh release download data-2026-08-21 --repo DineshKumar8399/polymarket-orderbook-dataset
 tar --zstd -xf polymarket-orderbook-*.tar.zst
 ```
 
-Each release is a frozen snapshot, so `data-2026-08-20` is reproducible: cite the
+Each release is a frozen snapshot, so `data-2026-08-21` is reproducible: cite the
 tag and anyone can reconstruct the exact data you trained on. Latest build:
-**2026-08-20**.
+**2026-08-21**.
 
 ---
 
@@ -51,13 +51,13 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 
 | File | Rows | What it is |
 |---|---|---|
-| `quotes/dt=YYYY-MM-DD/*.parquet` | `281,268,633` | Book quotes for every tracked market, partitioned by date |
-| `markets.parquet` | `172,036` | One row per market: question text, category, coverage |
-| `labels.parquet` | `146,022` | Binary settlement outcomes, with a `source` column |
-| `watch_quotes.parquet` | `1,691,703` | High-frequency feed — **the only table with traded prices** |
+| `quotes/dt=YYYY-MM-DD/*.parquet` | `290,006,113` | Book quotes for every tracked market, partitioned by date |
+| `markets.parquet` | `172,540` | One row per market: question text, category, coverage |
+| `labels.parquet` | `146,736` | Binary settlement outcomes, with a `source` column |
+| `watch_quotes.parquet` | `1,741,767` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
-Total: about `149 MB` of ZSTD-compressed Parquet.
+Total: about `153 MB` of ZSTD-compressed Parquet.
 
 ---
 
@@ -136,7 +136,7 @@ also the cost per unit of payoff.
 | `first_ts` / `last_ts` | timestamp | Coverage window |
 
 `question` is stored here rather than on every quote row — repeating it
-`281,268,633` times is most of why the raw CSV was 32 GB.
+`290,006,113` times is most of why the raw CSV was 32 GB.
 
 ### `labels.parquet`
 
@@ -214,7 +214,7 @@ has been **dropped rather than shipped as an empty column named `last`**.
 
 If your question is "did this actually transact" — fill realism, execution
 modelling, print-versus-quote — it is only answerable on `watch_quotes`, which
-covers 5,022 markets rather than 172,036. Note `last_traded` is itself 85.6%
+covers 5,105 markets rather than 172,540. Note `last_traded` is itself 85.3%
 populated, not 100%.
 
 ### 4. Crossed books
@@ -226,8 +226,8 @@ your method is sensitive to it.
 ### 5. Labels are time-censored
 
 Most `source = 'api'` labels come from a one-off backfill run on 2026-07-23/24.
-So "has a label" correlates strongly with "settled before Jul 24" — 110,173
-markets (64%) carry an authoritative label, and they are **not a random 64%**.
+So "has a label" correlates strongly with "settled before Jul 24" — 125,759
+markets (73%) carry an authoritative label, and they are **not a random 73%**.
 
 This bites hardest on walk-forward validation: naively splitting train/test on a
 late date can leave you with an empty test set and a script that reports success
@@ -261,8 +261,8 @@ Markets by category:
 
 ```
    category  slugs
-     sports 168274
-   politics   1443
+     sports 168774
+   politics   1447
     climate    977
     culture    936
       macro    154
