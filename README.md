@@ -1,8 +1,8 @@
 # Polymarket Order Book Dataset
 
 Order-book snapshots from a prediction market, collected continuously between
-**2026-07-10** and **2026-09-01**: `388,898,713` quote observations across
-`224,268` markets, plus settlement outcomes and a separate high-frequency feed
+**2026-07-10** and **2026-09-02**: `396,874,224` quote observations across
+`229,795` markets, plus settlement outcomes and a separate high-frequency feed
 that records actual traded prices.
 
 It is published so other people can build and train on it without first spending
@@ -34,16 +34,16 @@ import duckdb
 duckdb.sql("SELECT * FROM 'polymarket-data/quotes/**/*.parquet' LIMIT 5").show()
 ```
 
-**GitHub Releases** (a single dated tarball, ~190 MB):
+**GitHub Releases** (a single dated tarball, ~194 MB):
 
 ```bash
-gh release download data-2026-09-02 --repo DineshKumar8399/polymarket-orderbook-dataset
+gh release download data-2026-09-03 --repo DineshKumar8399/polymarket-orderbook-dataset
 tar --zstd -xf polymarket-orderbook-*.tar.zst
 ```
 
-Each release is a frozen snapshot, so `data-2026-09-02` is reproducible: cite the
+Each release is a frozen snapshot, so `data-2026-09-03` is reproducible: cite the
 tag and anyone can reconstruct the exact data you trained on. Latest build:
-**2026-09-02**.
+**2026-09-03**.
 
 ---
 
@@ -51,13 +51,13 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 
 | File | Rows | What it is |
 |---|---|---|
-| `quotes/dt=YYYY-MM-DD/*.parquet` | `388,898,713` | Book quotes for every tracked market, partitioned by date |
-| `markets.parquet` | `224,268` | One row per market: question text, category, coverage |
-| `labels.parquet` | `171,594` | Binary settlement outcomes, with a `source` column |
-| `watch_quotes.parquet` | `2,334,940` | High-frequency feed — **the only table with traded prices** |
+| `quotes/dt=YYYY-MM-DD/*.parquet` | `396,874,224` | Book quotes for every tracked market, partitioned by date |
+| `markets.parquet` | `229,795` | One row per market: question text, category, coverage |
+| `labels.parquet` | `171,620` | Binary settlement outcomes, with a `source` column |
+| `watch_quotes.parquet` | `2,384,792` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
-Total: about `190 MB` of ZSTD-compressed Parquet.
+Total: about `194 MB` of ZSTD-compressed Parquet.
 
 ---
 
@@ -136,7 +136,7 @@ also the cost per unit of payoff.
 | `first_ts` / `last_ts` | timestamp | Coverage window |
 
 `question` is stored here rather than on every quote row — repeating it
-`388,898,713` times is most of why the raw CSV was 32 GB.
+`396,874,224` times is most of why the raw CSV was 32 GB.
 
 ### `labels.parquet`
 
@@ -214,7 +214,7 @@ has been **dropped rather than shipped as an empty column named `last`**.
 
 If your question is "did this actually transact" — fill realism, execution
 modelling, print-versus-quote — it is only answerable on `watch_quotes`, which
-covers 6,293 markets rather than 224,268. Note `last_traded` is itself 83.2%
+covers 6,353 markets rather than 229,795. Note `last_traded` is itself 83.3%
 populated, not 100%.
 
 ### 4. Crossed books
@@ -227,7 +227,7 @@ your method is sensitive to it.
 
 Most `source = 'api'` labels come from a one-off backfill run on 2026-07-23/24.
 So "has a label" correlates strongly with "settled before Jul 24" — 169,458
-markets (76%) carry an authoritative label, and they are **not a random 76%**.
+markets (74%) carry an authoritative label, and they are **not a random 74%**.
 
 This bites hardest on walk-forward validation: naively splitting train/test on a
 late date can leave you with an empty test set and a script that reports success
@@ -261,14 +261,14 @@ Markets by category:
 
 ```
    category  slugs
-     sports 215631
+     sports 221108
    politics   5788
-    culture   1320
-    climate   1096
+    culture   1349
+    climate   1104
       macro    154
- technology    104
-    finance     96
-     crypto     51
+ technology    111
+    finance     98
+     crypto     55
     science     14
 geopolitics     14
 ```
