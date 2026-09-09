@@ -1,8 +1,8 @@
 # Polymarket Order Book Dataset
 
 Order-book snapshots from a prediction market, collected continuously between
-**2026-07-10** and **2026-09-07**: `438,357,177` quote observations across
-`249,473` markets, plus settlement outcomes and a separate high-frequency feed
+**2026-07-10** and **2026-09-08**: `446,052,939` quote observations across
+`286,934` markets, plus settlement outcomes and a separate high-frequency feed
 that records actual traded prices.
 
 It is published so other people can build and train on it without first spending
@@ -34,16 +34,16 @@ import duckdb
 duckdb.sql("SELECT * FROM 'polymarket-data/quotes/**/*.parquet' LIMIT 5").show()
 ```
 
-**GitHub Releases** (a single dated tarball, ~208 MB):
+**GitHub Releases** (a single dated tarball, ~212 MB):
 
 ```bash
-gh release download data-2026-09-08 --repo DineshKumar8399/polymarket-orderbook-dataset
+gh release download data-2026-09-09 --repo DineshKumar8399/polymarket-orderbook-dataset
 tar --zstd -xf polymarket-orderbook-*.tar.zst
 ```
 
-Each release is a frozen snapshot, so `data-2026-09-08` is reproducible: cite the
+Each release is a frozen snapshot, so `data-2026-09-09` is reproducible: cite the
 tag and anyone can reconstruct the exact data you trained on. Latest build:
-**2026-09-08**.
+**2026-09-09**.
 
 ---
 
@@ -51,13 +51,13 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 
 | File | Rows | What it is |
 |---|---|---|
-| `quotes/dt=YYYY-MM-DD/*.parquet` | `438,357,177` | Book quotes for every tracked market, partitioned by date |
-| `markets.parquet` | `249,473` | One row per market: question text, category, coverage |
-| `labels.parquet` | `176,940` | Binary settlement outcomes, with a `source` column |
-| `watch_quotes.parquet` | `2,626,511` | High-frequency feed — **the only table with traded prices** |
+| `quotes/dt=YYYY-MM-DD/*.parquet` | `446,052,939` | Book quotes for every tracked market, partitioned by date |
+| `markets.parquet` | `286,934` | One row per market: question text, category, coverage |
+| `labels.parquet` | `178,290` | Binary settlement outcomes, with a `source` column |
+| `watch_quotes.parquet` | `2,674,751` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
-Total: about `208 MB` of ZSTD-compressed Parquet.
+Total: about `212 MB` of ZSTD-compressed Parquet.
 
 ---
 
@@ -136,7 +136,7 @@ also the cost per unit of payoff.
 | `first_ts` / `last_ts` | timestamp | Coverage window |
 
 `question` is stored here rather than on every quote row — repeating it
-`438,357,177` times is most of why the raw CSV was 32 GB.
+`446,052,939` times is most of why the raw CSV was 32 GB.
 
 ### `labels.parquet`
 
@@ -214,7 +214,7 @@ has been **dropped rather than shipped as an empty column named `last`**.
 
 If your question is "did this actually transact" — fill realism, execution
 modelling, print-versus-quote — it is only answerable on `watch_quotes`, which
-covers 6,601 markets rather than 249,473. Note `last_traded` is itself 83.4%
+covers 6,653 markets rather than 286,934. Note `last_traded` is itself 83.7%
 populated, not 100%.
 
 ### 4. Crossed books
@@ -227,7 +227,7 @@ your method is sensitive to it.
 
 Most `source = 'api'` labels come from a one-off backfill run on 2026-07-23/24.
 So "has a label" correlates strongly with "settled before Jul 24" — 169,458
-markets (68%) carry an authoritative label, and they are **not a random 68%**.
+markets (59%) carry an authoritative label, and they are **not a random 59%**.
 
 This bites hardest on walk-forward validation: naively splitting train/test on a
 late date can leave you with an empty test set and a script that reports success
@@ -261,12 +261,12 @@ Markets by category:
 
 ```
    category  slugs
-     sports 240398
-   politics   6126
-    culture   1370
-    climate   1126
+     sports 277475
+   politics   6437
+    culture   1380
+    climate   1188
       macro    154
- technology    115
+ technology    116
     finance     99
      crypto     57
     science     14
