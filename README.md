@@ -1,7 +1,7 @@
 # Polymarket Order Book Dataset
 
 Order-book snapshots from a prediction market, collected continuously between
-**2026-07-10** and **2026-09-11**: `471,070,298` quote observations across
+**2026-07-10** and **2026-09-12**: `479,720,253` quote observations across
 `314,123` markets, plus settlement outcomes and a separate high-frequency feed
 that records actual traded prices.
 
@@ -34,16 +34,16 @@ import duckdb
 duckdb.sql("SELECT * FROM 'polymarket-data/quotes/**/*.parquet' LIMIT 5").show()
 ```
 
-**GitHub Releases** (a single dated tarball, ~220 MB):
+**GitHub Releases** (a single dated tarball, ~222 MB):
 
 ```bash
-gh release download data-2026-09-12 --repo DineshKumar8399/polymarket-orderbook-dataset
+gh release download data-2026-09-13 --repo DineshKumar8399/polymarket-orderbook-dataset
 tar --zstd -xf polymarket-orderbook-*.tar.zst
 ```
 
-Each release is a frozen snapshot, so `data-2026-09-12` is reproducible: cite the
+Each release is a frozen snapshot, so `data-2026-09-13` is reproducible: cite the
 tag and anyone can reconstruct the exact data you trained on. Latest build:
-**2026-09-12**.
+**2026-09-13**.
 
 ---
 
@@ -51,13 +51,13 @@ tag and anyone can reconstruct the exact data you trained on. Latest build:
 
 | File | Rows | What it is |
 |---|---|---|
-| `quotes/dt=YYYY-MM-DD/*.parquet` | `471,070,298` | Book quotes for every tracked market, partitioned by date |
+| `quotes/dt=YYYY-MM-DD/*.parquet` | `479,720,253` | Book quotes for every tracked market, partitioned by date |
 | `markets.parquet` | `314,123` | One row per market: question text, category, coverage |
-| `labels.parquet` | `179,996` | Binary settlement outcomes, with a `source` column |
-| `watch_quotes.parquet` | `2,823,259` | High-frequency feed — **the only table with traded prices** |
+| `labels.parquet` | `184,814` | Binary settlement outcomes, with a `source` column |
+| `watch_quotes.parquet` | `2,864,568` | High-frequency feed — **the only table with traded prices** |
 | `data_quality.parquet` | 7 | The known issues below, as queryable rows |
 
-Total: about `220 MB` of ZSTD-compressed Parquet.
+Total: about `222 MB` of ZSTD-compressed Parquet.
 
 ---
 
@@ -136,7 +136,7 @@ also the cost per unit of payoff.
 | `first_ts` / `last_ts` | timestamp | Coverage window |
 
 `question` is stored here rather than on every quote row — repeating it
-`471,070,298` times is most of why the raw CSV was 32 GB.
+`479,720,253` times is most of why the raw CSV was 32 GB.
 
 ### `labels.parquet`
 
@@ -214,7 +214,7 @@ has been **dropped rather than shipped as an empty column named `last`**.
 
 If your question is "did this actually transact" — fill realism, execution
 modelling, print-versus-quote — it is only answerable on `watch_quotes`, which
-covers 6,845 markets rather than 314,123. Note `last_traded` is itself 83.8%
+covers 6,867 markets rather than 314,123. Note `last_traded` is itself 83.1%
 populated, not 100%.
 
 ### 4. Crossed books
